@@ -1,0 +1,334 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.ALMassachusetts:al_massachusetts.yml
+---
+metadata:
+  title: >-
+    Informal Appellant Brief
+  short title: >-
+    Informal appellant brief
+  description: |-
+    This interview helps someone in Massachusetts draft an Appellant Brief.
+  tags:
+    - "CO-03-00-00-00"
+  authors:
+    - LIT Clinic
+  allowed_courts: 
+    - "Appeals Court"
+  typical_role: "plaintiff"
+  al_weaver_version: "1.10.2"
+  generated_on: "2023-10-25"
+---
+code: |
+  # This controls the default country and list of states in address field questions
+  AL_DEFAULT_COUNTRY = "US"
+---
+code: |
+  # This controls the default state in address field questions
+  AL_DEFAULT_STATE = "MA"
+---
+code: |
+  github_repo_name =  'docassemble-InformalAppellantBriefTemplateL'
+---
+code: |
+  interview_short_title = "Draft an Appellant Brief"
+---
+code: |
+  al_form_type = "appeal" 
+---
+objects:
+  - other_parties: ALPeopleList.using(there_are_any=True)
+  - users: ALPeopleList.using(there_are_any=True)
+---
+sections:
+  - review_informal_appellant_brief_template_l: Review your answers
+---
+#################### Interview order #####################
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_informal_appellant_brief_template_l
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = ['Appeals Court']
+  nav.set_section("review_informal_appellant_brief_template_l")
+  user_role = "plaintiff"
+  user_ask_role = "plaintiff"
+  your_name
+  docket_number
+  Your_Name
+  set_progress(20)
+  issues_on_appeal
+  case_history
+  statement_of_facts
+  set_progress(40)
+  argument
+  conclusion
+  your_signature
+  interview_order_informal_appellant_brief_template_l = True
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  al_intro_screen
+  informal_appellant_brief_template_l_intro
+  interview_order_informal_appellant_brief_template_l
+  signature_date
+  # Store anonymous data for analytics / statistics
+  store_variables_snapshot(
+      persistent=True,
+      data={
+          "zip": showifdef("users[0].address.zip"),
+          "reached_interview_end": True,
+      },
+  )
+  informal_appellant_brief_template_l_download
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Informal_Appellant_Brief
+continue button field: informal_appellant_brief_template_l_intro
+question: |
+  Informal Appellant Brief
+subquestion: |
+  This interview will help you draft an Appellant Brief.
+  
+  Before you get started, please gather:
+  
+  1. 
+  1. 
+  1. 
+  
+  When you are finished, you will need to:
+  
+  1. 
+  1. 
+  
+  Most people take about _______ minutes to finish this interview.
+---
+id: Background Information
+question: |
+  Background Information
+fields:
+  - "Your Full Name": your_name
+  - "Pronouns": pronouns
+    input type: dropdown
+    choices:
+      - She/Her
+      - He/Him
+      - They/Them
+      - Prefer Not Say
+  - "Your Address": address
+  - "Your Email Address": email
+  - "Your Phone Number": phone_number
+  - "Today's Date": date
+    datatype: date
+---
+id: Case Information
+question: |
+  Case Information
+fields:
+  - "Your Full Name": Your_Name
+  - "Plaintiff": plaintiff
+  - "Lower Court": Lower_Court
+  - "Defendant": defendant
+---
+id: Issues on Appeal
+question: |
+  Issues on Appeal
+fields:
+  - "Issues on Appeal": issues_on_appeal
+---
+id: Case History
+question: |
+  Case History
+fields:
+  - "Case History": case_history
+---
+id: Statement of the Facts
+question: |
+  Statement of the Facts
+fields:
+  - "Statement of Facts": statement_of_facts
+---
+id: Argument
+question: |
+  Argument
+fields:
+  - "Argument": argument
+---
+id: Conclusion
+question: |
+  Conclusion
+fields:
+  - "Conclusion": conclusion
+---
+id: Certificate of Service
+question: |
+  Certificate of Service
+fields:
+  - "Your Signature": your_signature
+  - "Recipient Addresses": recipient_addresses
+  - "Parties Served": parties_served
+---
+id: preview informal_appellant_brief_template_l
+question: |
+  Preview your form before you sign it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.   
+  
+  ${ al_court_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Edit answers" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_informal_appellant_brief_template_l'), label='Edit answers', color='info') }
+  
+  Remember to come back to this window to continue and sign your form.
+continue button field: informal_appellant_brief_template_l_preview_question    
+---
+code: |
+  signature_fields = []
+---
+code: |
+  # This is a placeholder for the addresses that will be searched
+  # for matching address to court. Edit if court venue is based on 
+  # a different address than the user's
+  [user.address.address for user in users.complete_elements()]
+  addresses_to_search = [user.address for user in users.complete_elements()]
+---
+id: informal appellant brief template l review screen
+event: review_informal_appellant_brief_template_l
+question: |
+  Review your answers
+review:
+  - Edit: your_signature
+    button: |
+      **Your Signature**:
+      ${ your_signature }
+  - Edit: your_name
+    button: |
+      **Your Full Name**:
+      ${ your_name }
+  - Edit: pronouns
+    button: |
+      **Pronouns**:
+      ${ pronouns }
+  - Edit: recipient_addresses
+    button: |
+      **Recipient Addresses**:
+      ${ recipient_addresses }
+  - Edit: case_history
+    button: |
+      **Case History**:
+      ${ case_history }
+  - Edit: parties_served
+    button: |
+      **Parties Served**:
+      ${ parties_served }
+  - Edit: Your_Name
+    button: |
+      **Your Full Name**:
+      ${ Your_Name }
+  - Edit: issues_on_appeal
+    button: |
+      **Issues on Appeal**:
+      ${ issues_on_appeal }
+  - Edit: address
+    button: |
+      **Your Address**:
+      ${ address }
+  - Edit: docket_number
+    button: |
+      **Docket number**:
+      ${ docket_number }
+  - Edit: argument
+    button: |
+      **Argument**:
+      ${ argument }
+  - Edit: plaintiff[0]
+    button: |
+      **Plaintiff[0]**:
+      ${ plaintiff[0] }
+  - Edit: email
+    button: |
+      **Your Email Address**:
+      ${ email }
+  - Edit: Lower_Court
+    button: |
+      **Lower Court**:
+      ${ Lower_Court }
+  - Edit: conclusion
+    button: |
+      **Conclusion**:
+      ${ conclusion }
+  - Edit: phone_number
+    button: |
+      **Your Phone Number**:
+      ${ phone_number }
+  - Edit: statement_of_facts
+    button: |
+      **Statement of Facts**:
+      ${ statement_of_facts }
+  - Edit: date
+    button: |
+      **Today's Date**:
+      ${ date }
+  - Edit: defendant[0]
+    button: |
+      **Defendant[0]**:
+      ${ defendant[0] }
+---
+id: download informal_appellant_brief_template_l
+event: informal_appellant_brief_template_l_download
+question: |
+  All done
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_informal_appellant_brief_template_l'), label='Edit answers', color='info') }
+  
+  
+  ${ al_user_bundle.download_list_html() }
+  
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=True) }
+
+progress: 100
+---
+# ALDocument objects specify the metadata for each template
+objects:
+  - informal_appellant_brief_template_l_Post_interview_instructions: ALDocument.using(title="Instructions", filename="informal_appellant_brief_template_l_next_steps.docx", enabled=True, has_addendum=False)
+  - informal_appellant_brief_template_l_attachment: ALDocument.using(title="Informal Appellant Brief", filename="informal_appellant_brief_template_l", enabled=True, has_addendum=False, )
+---
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[informal_appellant_brief_template_l_Post_interview_instructions, informal_appellant_brief_template_l_attachment], filename="informal_appellant_brief_template_l", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[informal_appellant_brief_template_l_attachment],  filename="informal_appellant_brief_template_l", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
+# used for "preview" and "final" keys, and logic in the template checks the value of 
+# `i` to show or hide the user's signature
+attachment:
+  name: Post-interview-Instructions
+  filename: informal_appellant_brief_template_l_next_steps
+  docx template file: informal_appellant_brief_template_l_next_steps.docx
+  variable name: informal_appellant_brief_template_l_Post_interview_instructions[i]
+  skip undefined: True
+  tagged pdf: True
+---
+attachment:
+  name: informal appellant brief template l
+  filename: informal_appellant_brief_template_l
+  variable name: informal_appellant_brief_template_l_attachment[i]
+  skip undefined: True
+  docx template file: informal_appellant_brief_template_l.docx
+  tagged pdf: True
+
+
+
